@@ -1,4 +1,4 @@
-package com.ticketmaster.bastionchecker;
+package com.habitat.bastionchecker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

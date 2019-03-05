@@ -1,17 +1,16 @@
-package com.ticketmaster.bastionchecker.services;
+package com.habitat.bastionchecker.services;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.ticketmaster.bastionchecker.model.BastionCensus;
-import com.ticketmaster.bastionchecker.model.BastionCensusGroup;
-import com.ticketmaster.bastionchecker.model.ServicePopulation;
-import com.ticketmaster.bastionchecker.model.view.ServiceInfo;
+import com.habitat.bastionchecker.model.BastionCensus;
+import com.habitat.bastionchecker.model.BastionCensusGroup;
+import com.habitat.bastionchecker.model.ServicePopulation;
+import com.habitat.bastionchecker.model.view.ServiceInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +28,10 @@ public class AWSBastionServiceImpl implements AWSBastionService {
     private String bastionEndpoint;
 
     @Override
-    public List<ServiceInfo> getInfo() {
+    public List<ServiceInfo> getInfo() throws Exception {
         String url = bastionEndpoint + SERVICE_ENDPOINT;
-        try {
-            BastionCensus bastionCensus = restTemplate.getForObject(url, BastionCensus.class);
-            return generateServiceIfo(bastionCensus.getCensusGroup());
-        } catch (Exception ex) {
-            return Collections.emptyList();
-        }
+        BastionCensus bastionCensus = restTemplate.getForObject(url, BastionCensus.class);
+        return generateServiceIfo(bastionCensus.getCensusGroup());
     }
 
     private List<ServiceInfo> generateServiceIfo(Map<String, BastionCensusGroup> censusGroup) {
@@ -81,7 +76,5 @@ public class AWSBastionServiceImpl implements AWSBastionService {
         });
         return serviceInfos.stream().sorted(Comparator.comparing(ServiceInfo::getServiceName)).collect(Collectors.toList());
     }
-
-    ;
 
 }

@@ -1,4 +1,4 @@
-$( document ).ready(function() {
+$(document).ready(function () {
     showEnvironment();
 });
 
@@ -9,7 +9,12 @@ var showEnvironment = function () {
         type: "GET",
         complete: function (data) {
             if (data.status >= 200 && data.status < 300) {
+                $("div.infostring").html("");
                 showResults(data.responseJSON);
+            } else {
+                $("div.infostring").html("");
+                var builderHTML = "<h4>" + data.responseText + "</h4>";
+                $("div.infostring").html(builderHTML);
             }
         }
     });

@@ -1,4 +1,4 @@
-package com.ticketmaster.bastionchecker;
+package com.habitat.bastionchecker;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

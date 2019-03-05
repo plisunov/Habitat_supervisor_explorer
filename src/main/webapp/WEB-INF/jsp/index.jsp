@@ -24,9 +24,11 @@
     <div class="navbar-collapse collapse">
         <h4>Bastion base host: ${environment}</h4>
     </div>
+
 </div>
 <div class="jumbotron">
     <h1>Services information</h1>
+    <div class="infostring"></div>
     <div class="resultInfo"></div>
 </div>
 

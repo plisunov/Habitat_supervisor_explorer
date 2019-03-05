@@ -1,4 +1,4 @@
-package com.ticketmaster.bastionchecker.configuration;
+package com.habitat.bastionchecker.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,7 @@
-package com.ticketmaster.bastionchecker.model.view;
+package com.habitat.bastionchecker.model.view;
 
-import com.ticketmaster.bastionchecker.model.ServicePackage;
-import com.ticketmaster.bastionchecker.model.ServiceSystem;
+import com.habitat.bastionchecker.model.ServicePackage;
+import com.habitat.bastionchecker.model.ServiceSystem;
 import lombok.Data;
 
 import java.util.Map;
