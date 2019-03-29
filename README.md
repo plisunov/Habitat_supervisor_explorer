@@ -23,7 +23,7 @@
  
  Alternatively you can use JRE like so(JAVA_HOME must be set):
        
-       java - jar artifact.war --bastion.endpoint=BastionURL 
+       java - jar artifact.war --bastion.endpoint=BastionURL --bastion.endpoint.bearer=BastionBearerToken
  
 ###Copyright
  Released under the Apache License 2.0. See the LICENSE file.    
