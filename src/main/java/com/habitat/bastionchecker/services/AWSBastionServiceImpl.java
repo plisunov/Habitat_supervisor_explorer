@@ -8,6 +8,9 @@ import com.habitat.bastionchecker.model.ServicePopulation;
 import com.habitat.bastionchecker.model.view.ServiceInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,7 +25,10 @@ public class AWSBastionServiceImpl implements AWSBastionService {
     private static final String SERVICE_ENDPOINT = "/census";
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
+
+    @Value("${bastion.endpoint.bearer}")
+    private String bearer;
 
     @Value("${bastion.endpoint}")
     private String bastionEndpoint;
@@ -30,7 +36,10 @@ public class AWSBastionServiceImpl implements AWSBastionService {
     @Override
     public List<ServiceInfo> getInfo() throws Exception {
         String url = bastionEndpoint + SERVICE_ENDPOINT;
-        BastionCensus bastionCensus = restTemplate.getForObject(url, BastionCensus.class);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(bearer);
+        HttpEntity<String> entity = new HttpEntity<>("parameters", httpHeaders);
+        BastionCensus bastionCensus = restTemplate.exchange(url, HttpMethod.GET, entity, BastionCensus.class).getBody();
         return generateServiceIfo(bastionCensus.getCensusGroup());
     }
 
