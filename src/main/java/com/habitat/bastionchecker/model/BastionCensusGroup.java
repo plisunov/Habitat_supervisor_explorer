@@ -23,7 +23,7 @@ public class BastionCensusGroup {
     private Object leaderId;
 
     @JsonProperty("service_config")
-    private Object serviceConfig;
+    private ServiceConfig serviceConfig;
 
     @JsonProperty("local_member_id")
     private Object localMemberId;

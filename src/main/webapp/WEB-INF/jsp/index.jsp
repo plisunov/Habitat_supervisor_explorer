@@ -29,7 +29,7 @@
 <div class="jumbotron">
     <h1>Services information</h1>
     <div class="infostring"></div>
-    <div class="resultInfo"></div>
+    <div class="resultInfo" style="width: 95%"></div>
 </div>
 
 <script type="text/javascript" src="${jQuery}"></script>

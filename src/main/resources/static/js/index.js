@@ -21,17 +21,31 @@ var showEnvironment = function () {
 }
 
 
+function generateInfoFromMap(properties) {
+    var result = "";
+    Object.keys(properties).forEach(function (key) {
+        var value = properties[key];
+        if (typeof(value) === 'object') {
+            result += "<li><b>" + key + "</b>: <ul>" + generateInfoFromMap(value) + "</ul></li>";
+        } else {
+            result += "<li><b>" + key + "</b>: " + properties[key] + "</li>";
+        }
+
+    });
+    return result;
+}
+
 var showResults = function (listInfos) {
     $("div.resultInfo").html("");
     var builderHTML = "";
-    builderHTML += "<table id=\"report\">";
+    builderHTML += "<table id=\"report\" style=\"width: 100%\">";
     builderHTML += "<tr>";
-    builderHTML += "<th onclick='sortTable(\"name\")'><p>Service name</p></th>";
-    builderHTML += "<th onclick='sortTable(\"group\")'><p>Service group</p></th>";
+    builderHTML += "<th onclick='sortTable(\"name\")' style='cursor: pointer'>Service name</th>";
+    builderHTML += "<th onclick='sortTable(\"group\")' style='cursor: pointer'>Service group</th>";
     builderHTML += "<th>Service version</th>";
-    builderHTML += "<th onclick='sortTable(\"ip\")'><p>Service IP</p></th>";
-    builderHTML += "<th onclick='sortTable(\"host\")'><p>Service host</p></th>";
-    builderHTML += "<th>Active</th>";
+    builderHTML += "<th onclick='sortTable(\"ip\")' style='cursor: pointer'>Service IP</th>";
+    builderHTML += "<th onclick='sortTable(\"host\")' style='cursor: pointer'>Service host</th>";
+    builderHTML += "<th>Active<br></th>";
 
     builderHTML += "<th></th>";
     builderHTML += "</tr>";
@@ -65,6 +79,16 @@ var showResults = function (listInfos) {
         builderHTML += "<li><b>Update election is running</b>: " + listInfos[i].updateElectionIsRunning + "</li>";
         builderHTML += "<li><b>Update follower</b>: " + listInfos[i].updateFollower + "</li>";
         builderHTML += "<li><b>Update leader</b>: " + listInfos[i].updateleader + "</li>";
+        if (listInfos[i].configuration != null &&  !jQuery.isEmptyObject(listInfos[i].configuration)) {
+            builderHTML += "<hr>";
+            builderHTML += "<h4>Configuration</h4>";
+            builderHTML += generateInfoFromMap(listInfos[i].configuration);
+        }
+        if (listInfos[i].properties != null) {
+            builderHTML += "<hr>";
+            builderHTML += "<h4>Properties</h4>";
+            builderHTML += generateInfoFromMap(listInfos[i].properties);
+        }
         builderHTML += "</td>";
         builderHTML += "</tr>";
 

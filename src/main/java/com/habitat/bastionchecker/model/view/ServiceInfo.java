@@ -57,5 +57,5 @@ public class ServiceInfo {
 
     private Map<String, String> configuration;
 
-
+    private Map<String, Object> properties;
 }

@@ -6,6 +6,7 @@ import com.habitat.bastionchecker.model.BastionCensus;
 import com.habitat.bastionchecker.model.BastionCensusGroup;
 import com.habitat.bastionchecker.model.ServicePopulation;
 import com.habitat.bastionchecker.model.view.ServiceInfo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -47,43 +48,45 @@ public class AWSBastionServiceImpl implements AWSBastionService {
         List<ServiceInfo> serviceInfos = Lists.newArrayList();
         List<BastionCensusGroup> services = censusGroup.values().stream().collect(Collectors.toList());
         services.forEach(service -> {
+            ServiceInfo serviceInfo = new ServiceInfo();
+            serviceInfo.setProperties(service.getServiceConfig() != null ? service.getServiceConfig().getProperties() : null);
             List<ServicePopulation> populations = service.getPopulation().values().stream().distinct().collect(Collectors.toList());
-            for (ServicePopulation population : populations) {
-                if (population.getAlive() || populations.size() == 1) {
-                    ServiceInfo serviceInfo = new ServiceInfo();
-                    serviceInfo.setMemberId(population.getMemberId());
-                    serviceInfo.setPkg(population.getPkg());
-                    serviceInfo.setServiceName(population.getServiceName());
-                    serviceInfo.setPackageString(population.getPackageString());
-                    serviceInfo.setApplication(population.getApplication());
-                    serviceInfo.setEnvironment(population.getEnvironment());
-                    serviceInfo.setServiceGroup(population.getServiceGroup());
-                    serviceInfo.setPersistent(population.getPersistent());
-                    serviceInfo.setLeader(population.getLeader());
-                    serviceInfo.setFollower(population.getFollower());
-                    serviceInfo.setUpdateleader(population.getUpdateleader());
-                    serviceInfo.setUpdateFollower(population.getUpdateFollower());
-                    serviceInfo.setElectionIsRunning(population.getElectionIsRunning());
-                    serviceInfo.setElectionIsNoQuorum(population.getElectionIsNoQuorum());
-                    serviceInfo.setElectionIsFinished(population.getElectionIsFinished());
-                    serviceInfo.setUpdateElectionIsNoQuorum(population.getUpdateElectionIsNoQuorum());
-                    serviceInfo.setUpdateElectionIsFinished(population.getUpdateElectionIsFinished());
-                    serviceInfo.setUpdateElectionIsRunning(population.getUpdateElectionIsRunning());
-                    serviceInfo.setSystem(population.getSystem());
-                    serviceInfo.setAlive(population.getAlive());
-                    serviceInfo.setSuspect(population.getSuspect());
-                    serviceInfo.setConfirmed(population.getConfirmed());
-                    serviceInfo.setDeparted(population.getDeparted());
-                    serviceInfo.setConfiguration(Maps.newHashMap());
-                    Map<String, Object> populationConfiguration = population.getConfiguration();
-                    for (String configurationName : populationConfiguration.keySet()) {
-                        serviceInfo.getConfiguration().put(configurationName, populationConfiguration.get(configurationName).toString());
-                    }
-                    serviceInfos.add(serviceInfo);
+            if (CollectionUtils.size(populations) > 1) {
+                populations = populations.stream().filter(servicePopulation -> servicePopulation.getAlive()).collect(Collectors.toList());
+            }
+            if (CollectionUtils.isNotEmpty(populations)) {
+                ServicePopulation population = populations.get(0);
+                serviceInfo.setMemberId(population.getMemberId());
+                serviceInfo.setPkg(population.getPkg());
+                serviceInfo.setServiceName(population.getServiceName());
+                serviceInfo.setPackageString(population.getPackageString());
+                serviceInfo.setApplication(population.getApplication());
+                serviceInfo.setEnvironment(population.getEnvironment());
+                serviceInfo.setServiceGroup(population.getServiceGroup());
+                serviceInfo.setPersistent(population.getPersistent());
+                serviceInfo.setLeader(population.getLeader());
+                serviceInfo.setFollower(population.getFollower());
+                serviceInfo.setUpdateleader(population.getUpdateleader());
+                serviceInfo.setUpdateFollower(population.getUpdateFollower());
+                serviceInfo.setElectionIsRunning(population.getElectionIsRunning());
+                serviceInfo.setElectionIsNoQuorum(population.getElectionIsNoQuorum());
+                serviceInfo.setElectionIsFinished(population.getElectionIsFinished());
+                serviceInfo.setUpdateElectionIsNoQuorum(population.getUpdateElectionIsNoQuorum());
+                serviceInfo.setUpdateElectionIsFinished(population.getUpdateElectionIsFinished());
+                serviceInfo.setUpdateElectionIsRunning(population.getUpdateElectionIsRunning());
+                serviceInfo.setSystem(population.getSystem());
+                serviceInfo.setAlive(population.getAlive());
+                serviceInfo.setSuspect(population.getSuspect());
+                serviceInfo.setConfirmed(population.getConfirmed());
+                serviceInfo.setDeparted(population.getDeparted());
+                serviceInfo.setConfiguration(Maps.newHashMap());
+                Map<String, Object> populationConfiguration = population.getConfiguration();
+                for (String configurationName : populationConfiguration.keySet()) {
+                    serviceInfo.getConfiguration().put(configurationName, populationConfiguration.get(configurationName).toString());
                 }
+                serviceInfos.add(serviceInfo);
             }
         });
         return serviceInfos.stream().sorted(Comparator.comparing(ServiceInfo::getServiceName)).collect(Collectors.toList());
     }
-
 }
