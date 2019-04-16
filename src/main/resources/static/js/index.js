@@ -54,13 +54,13 @@ var showResults = function (listInfos) {
         builderHTML += "<td>" + listInfos[i].serviceName + "</td>";
         builderHTML += "<td>" + listInfos[i].serviceGroup + "</td>";
         builderHTML += "<td>" + listInfos[i].pkg.version + "</td>";
-        builderHTML += "<td>" + listInfos[i].system.ip + "</td>";
+        builderHTML += "<td>" + listInfos[i].system.ip + " <input type='button' class='copypaste' onclick='copytoClipboard(\""+listInfos[i].system.ip+"\")'/></div></td>";
         builderHTML += "<td>" + listInfos[i].system.hostname + "</td>";
         builderHTML += "<td>" + listInfos[i].alive + "</td>";
         builderHTML += "<td><div class=\"arrow\"></div></td>";
         builderHTML += "</tr>";
         builderHTML += "<tr>"
-        builderHTML += "<td colspan=\"7\">";
+        builderHTML += "<td colspan='7'>";
         builderHTML += "<li><b>Application</b>: " + listInfos[i].application + "</li>";
         builderHTML += "<li><b>Confirmed</b>: " + listInfos[i].confirmed + "</li>";
         builderHTML += "<li><b>Departed</b>: " + listInfos[i].departed + "</li>";
@@ -104,12 +104,20 @@ var applyStyles = function () {
     $("#report tr:not(.odd)").hide();
     $("#report tr:first-child").show();
 
-    $("#report tr.odd").click(function () {
+    $("#report tr.odd").not($(this).find(".copypasteTD")).click(function () {
         $(this).next("tr").toggle();
         $(this).find(".arrow").toggleClass("up");
     });
 }
 
+var copytoClipboard = function (data) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val(data).select();
+    document.execCommand("copy");
+    $temp.remove();
+    alert("Copied to clipboard");
+}
 
 var sortTable = function (type) {
     $.ajax({

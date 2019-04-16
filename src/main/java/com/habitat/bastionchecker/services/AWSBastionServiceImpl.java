@@ -25,6 +25,8 @@ public class AWSBastionServiceImpl implements AWSBastionService {
 
     private static final String SERVICE_ENDPOINT = "/census";
 
+    private static final String SECRETVALUE = "********";
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -33,6 +35,9 @@ public class AWSBastionServiceImpl implements AWSBastionService {
 
     @Value("${bastion.endpoint}")
     private String bastionEndpoint;
+
+    @Value("#{'${bastion.secret.pattern}'.split(',')}")
+    private List<String> secretPattern;
 
     @Override
     public List<ServiceInfo> getInfo() throws Exception {
@@ -49,7 +54,7 @@ public class AWSBastionServiceImpl implements AWSBastionService {
         List<BastionCensusGroup> services = censusGroup.values().stream().collect(Collectors.toList());
         services.forEach(service -> {
             ServiceInfo serviceInfo = new ServiceInfo();
-            serviceInfo.setProperties(service.getServiceConfig() != null ? service.getServiceConfig().getProperties() : null);
+            serviceInfo.setProperties(service.getServiceConfig() != null ? replaceAllSecrets(service.getServiceConfig().getProperties()) : null);
             List<ServicePopulation> populations = service.getPopulation().values().stream().distinct().collect(Collectors.toList());
             if (CollectionUtils.size(populations) > 1) {
                 populations = populations.stream().filter(servicePopulation -> servicePopulation.getAlive()).collect(Collectors.toList());
@@ -89,4 +94,27 @@ public class AWSBastionServiceImpl implements AWSBastionService {
         });
         return serviceInfos.stream().sorted(Comparator.comparing(ServiceInfo::getServiceName)).collect(Collectors.toList());
     }
+
+    private Map<String, Object> replaceAllSecrets(Map<String, Object> map) {
+        map.entrySet().forEach(stringObjectEntry -> {
+            if (stringObjectEntry.getValue() instanceof Map) {
+                stringObjectEntry.setValue(replaceAllSecrets((Map<String, Object>) stringObjectEntry.getValue()));
+            } else {
+                if (keyForSecret(stringObjectEntry.getKey())) {
+                    stringObjectEntry.setValue(SECRETVALUE);
+                }
+            }
+        });
+        return map;
+    }
+
+    private boolean keyForSecret(String key) {
+        for (String pattern : secretPattern) {
+            if (key.contains(pattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
