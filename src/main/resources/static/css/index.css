@@ -25,7 +25,7 @@ body {
     background: #7CB8E2 url(header_bkg.png) repeat-x scroll center left;
     color: #fff;
     padding: 7px 15px;
-    text-align: center;
+    text-align: left;
 }
 
 #report td {
@@ -37,7 +37,7 @@ body {
 #report tr.odd td {
     background: #fff url(row_bkg.png) repeat-x scroll center left;
     cursor: pointer;
-    text-align: center;
+    text-align: left;
 }
 
 #report div.arrow {

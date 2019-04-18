@@ -3,6 +3,11 @@ $(document).ready(function () {
 });
 
 
+
+var updateContent = function() {
+    showEnvironment();
+}
+
 var showEnvironment = function () {
     $.ajax({
         url: "get",

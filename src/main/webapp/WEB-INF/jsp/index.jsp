@@ -37,6 +37,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         applyStyles();
+        setInterval(updateContent, 15000);
     });
 </script>
 </body>
