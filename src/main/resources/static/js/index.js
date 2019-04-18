@@ -2,9 +2,7 @@ $(document).ready(function () {
     showEnvironment();
 });
 
-
-
-var updateContent = function() {
+var reload = function () {
     showEnvironment();
 }
 

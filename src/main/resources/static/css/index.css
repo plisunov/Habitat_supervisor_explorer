@@ -67,3 +67,11 @@ P {
     border: none;
     padding: 8px 5px;
 }
+
+.updateBtn {
+    background: transparent url(refresh.png) no-repeat;
+    width: 32px;
+    height: 32px;
+    border: none;
+    margin-left: 20px;
+}

@@ -17,6 +17,7 @@
 
 </head>
 <body>
+
 <div id="navbar" class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
         <h2>Habitat Supervisor Explorer</h2>
@@ -24,10 +25,9 @@
     <div class="navbar-collapse collapse">
         <h4>Bastion base host: ${environment}</h4>
     </div>
-
 </div>
 <div class="jumbotron">
-    <h1>Services information</h1>
+    <h1>Services information<input type="button" class="updateBtn" onclick="reload()"/></h1>
     <div class="infostring"></div>
     <div class="resultInfo" style="width: 95%"></div>
 </div>
@@ -37,7 +37,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
         applyStyles();
-        setInterval(updateContent, 15000);
     });
 </script>
 </body>
