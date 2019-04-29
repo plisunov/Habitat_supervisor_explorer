@@ -35,7 +35,9 @@ public class WebController {
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity getServicesInfo(@RequestParam(name = "type", required = false) String sortBy) {
+    public ResponseEntity getServicesInfo(@RequestParam(name = "type", required = false) String sortBy,
+                                          @RequestParam(name = "filter", required = false) String filterBy,
+                                          @RequestParam(name = "filterValue", required = false) String filterValue) {
         try {
             List<ServiceInfo> servicesInfo = awsBastionService.getInfo();
             if (CollectionUtils.isEmpty(servicesInfo)) {
@@ -51,6 +53,16 @@ public class WebController {
                         return new ResponseEntity<>(servicesInfo.stream().sorted((s1, s2) -> s1.getSystem().getServiceIP().compareTo(s2.getSystem().getServiceIP())).collect(Collectors.toList()), HttpStatus.OK);
                     case "host":
                         return new ResponseEntity<>(servicesInfo.stream().sorted((s1, s2) -> s1.getSystem().getServiceHost().compareTo(s2.getSystem().getServiceHost())).collect(Collectors.toList()), HttpStatus.OK);
+                }
+            }
+            if (filterBy != null) {
+                switch (filterBy) {
+                    case "name":
+                        return new ResponseEntity<>(servicesInfo.stream().filter(service -> service.getServiceName().contains(filterValue)).collect(Collectors.toList()), HttpStatus.OK);
+                    case "group":
+                        return new ResponseEntity<>(servicesInfo.stream().filter(service -> service.getServiceGroup().contains(filterValue)).collect(Collectors.toList()), HttpStatus.OK);
+                    case "ip":
+                        return new ResponseEntity<>(servicesInfo.stream().filter(service -> service.getSystem().getServiceIP().contains(filterValue)).collect(Collectors.toList()), HttpStatus.OK);
                 }
             }
             return new ResponseEntity<>(servicesInfo, HttpStatus.OK);

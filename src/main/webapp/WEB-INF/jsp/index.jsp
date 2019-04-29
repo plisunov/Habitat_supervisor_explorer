@@ -26,11 +26,19 @@
         <h4>Bastion base host: ${environment}</h4>
     </div>
 </div>
+<div id="dialog-form" class="filter-form">
+    <input id="filterValue" type="text" name="filterValue"/>
+    <input id="filterOk" type="button" value="Ok"/>
+</div>
 <div class="jumbotron">
     <h1>Services information<input type="button" class="updateBtn" onclick="reload()"/></h1>
     <div class="infostring"></div>
     <div class="resultInfo" style="width: 95%"></div>
 </div>
+
+<div id="alert" class="alertDivHide"><div>Copied to clipboard</div></div>
+
+
 
 <script type="text/javascript" src="${jQuery}"></script>
 <script type="text/javascript" src="${pageJS}"></script>
@@ -41,3 +49,4 @@
 </script>
 </body>
 </html>
+

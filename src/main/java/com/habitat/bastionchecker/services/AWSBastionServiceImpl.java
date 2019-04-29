@@ -53,14 +53,15 @@ public class AWSBastionServiceImpl implements AWSBastionService {
         List<ServiceInfo> serviceInfos = Lists.newArrayList();
         List<BastionCensusGroup> services = censusGroup.values().stream().collect(Collectors.toList());
         services.forEach(service -> {
-            ServiceInfo serviceInfo = new ServiceInfo();
-            serviceInfo.setProperties(service.getServiceConfig() != null ? replaceAllSecrets(service.getServiceConfig().getProperties()) : null);
+
+            Map<String, Object> serviceProperties = service.getServiceConfig() != null ? replaceAllSecrets(service.getServiceConfig().getProperties()) : null;
             List<ServicePopulation> populations = service.getPopulation().values().stream().distinct().collect(Collectors.toList());
             if (CollectionUtils.size(populations) > 1) {
                 populations = populations.stream().filter(servicePopulation -> servicePopulation.getAlive()).collect(Collectors.toList());
             }
-            if (CollectionUtils.isNotEmpty(populations)) {
-                ServicePopulation population = populations.get(0);
+            populations.forEach(population -> {
+                ServiceInfo serviceInfo = new ServiceInfo();
+                serviceInfo.setProperties(serviceProperties);
                 serviceInfo.setMemberId(population.getMemberId());
                 serviceInfo.setPkg(population.getPkg());
                 serviceInfo.setServiceName(population.getServiceName());
@@ -90,7 +91,7 @@ public class AWSBastionServiceImpl implements AWSBastionService {
                     serviceInfo.getConfiguration().put(configurationName, populationConfiguration.get(configurationName).toString());
                 }
                 serviceInfos.add(serviceInfo);
-            }
+            });
         });
         return serviceInfos.stream().sorted(Comparator.comparing(ServiceInfo::getServiceName)).collect(Collectors.toList());
     }
@@ -99,13 +100,25 @@ public class AWSBastionServiceImpl implements AWSBastionService {
         map.entrySet().forEach(stringObjectEntry -> {
             if (stringObjectEntry.getValue() instanceof Map) {
                 stringObjectEntry.setValue(replaceAllSecrets((Map<String, Object>) stringObjectEntry.getValue()));
-            } else {
+            }
+            else if (stringObjectEntry.getValue() instanceof List) {
+                replaceAllSecretsInList((List<Object>) stringObjectEntry.getValue());
+            }
+             else {
                 if (keyForSecret(stringObjectEntry.getKey())) {
                     stringObjectEntry.setValue(SECRETVALUE);
                 }
             }
         });
         return map;
+    }
+
+    private void replaceAllSecretsInList(List<Object> list) {
+        for (Object listEntry : list) {
+            if (listEntry instanceof Map) {
+                listEntry = replaceAllSecrets((Map<String, Object>) listEntry);
+            }
+        }
     }
 
     private boolean keyForSecret(String key) {
